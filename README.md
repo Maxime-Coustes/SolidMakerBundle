@@ -69,6 +69,12 @@ php bin/console make:solid-service <entity>
 - Exploite DoctrineHelper pour détecter les métadonnées de l’entité
 - Utilise la réflexion PHP pour adapter automatiquement le service à la structure de l’entité ciblée
 
+⚠️⚠️⚠️ Le service généré utilise `DoctrineHelper::getDoctrineColumns()` pour récupérer dynamiquement les colonnes Doctrine de l'entité associée, ce qui simplifie la gestion des propriétés dans le service.
+Par conséquent la génération de App\Utils\DoctrineHelper est nécessaire et prise en charge par la commande 
+php bin/console make:solid-service <entity>
+
+
+
 🔹 Génération d’une Interface SOLID
 ```bash
 php bin/console make:solid-interface <entity>

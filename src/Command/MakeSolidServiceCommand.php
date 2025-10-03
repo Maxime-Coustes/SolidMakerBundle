@@ -74,6 +74,17 @@ class MakeSolidServiceCommand extends AbstractMaker
             ]
         );
 
+        $helperPath = "src/Utils/DoctrineHelper.php";
+        // si DoctrineHelper n'existe pas, je le crée
+        $doctrineHelperTemplatePath = __DIR__ . '/../Resources/skeleton/doctrine_helper.tpl.php';
+        if (!file_exists($helperPath)) {
+            $generator->generateClass(
+                "App\\Utils\\DoctrineHelper",
+               $doctrineHelperTemplatePath
+            );
+            $io->success("DoctrineHelper généré dans src/Utils/ ✅");
+        }
+
         $generator->writeChanges();
         $io->success("Service $serviceName généré ✅");
     }

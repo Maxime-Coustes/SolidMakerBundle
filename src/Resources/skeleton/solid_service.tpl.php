@@ -6,7 +6,7 @@ use <?= $interfaceNamespace ?>;
 use <?= $repositoryClass ?>;
 use <?= $entityClass ?>;
 use <?= $entityClass ?>Collection;
-use Src\Utils\DoctrineHelper;
+use App\Utils\DoctrineHelper;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
