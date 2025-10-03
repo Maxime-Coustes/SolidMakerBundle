@@ -1,0 +1,13 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+    Maxime\SolidMakerBundle\Command\:
+        resource: '../../Command'
+        tags: ['maker.command']
+        public: true
+
+    Maxime\SolidMakerBundle\:
+        resource: '../../*'
+        exclude: '../../{DependencyInjection,Entity,Migrations,Tests}'

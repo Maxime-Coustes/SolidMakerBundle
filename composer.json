@@ -1,0 +1,25 @@
+{
+    "name": "maxime/solidmaker-bundle",
+    "description": "A Symfony maker bundle for generating services, interfaces and collections from entity",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Maxime\\SolidMakerBundle\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Maxime-Coustes",
+            "email": "maxime.coustes@hotmail.fr"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.3",
+        "doctrine/orm": "^3.5",
+        "symfony/framework-bundle": "^7.2",
+        "symfony/maker-bundle": "^1.50"
+    }
+}
