@@ -12,7 +12,7 @@ interface <?= $interfaceName ?>
      *
      * @param <?= basename(str_replace('\\', '/', $entityName)) ?>Collection $<?= lcfirst(basename(str_replace('\\', '/', $entityName))) ?>Collection
      * @return array{
-     *     created: <?= basename(str_replace('\\', '/', $entityName)) ?>Collection, 
+     *     created: <?= basename(str_replace('\\', '/', $entityName)) ?>Collection,
      *     existing: <?= basename(str_replace('\\', '/', $entityName)) ?>Collection
      * }
      */
@@ -21,7 +21,7 @@ interface <?= $interfaceName ?>
     /**
      * Met à jour une collection d'entités <?= basename(str_replace('\\', '/', $entityName)) ?>.
      *
-     * Chaque entité de la collection est comparée à l'existante en base. 
+     * Chaque entité de la collection est comparée à l'existante en base.
      * Les entités mises à jour sont renvoyées, ainsi que celles non trouvées.
      *
      * @param <?= basename(str_replace('\\', '/', $entityName)) ?>Collection $<?= lcfirst(basename(str_replace('\\', '/', $entityName))) ?>Collection

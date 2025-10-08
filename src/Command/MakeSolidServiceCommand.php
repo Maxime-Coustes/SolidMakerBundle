@@ -75,15 +75,37 @@ class MakeSolidServiceCommand extends AbstractMaker
         );
 
         $helperPath = "src/Utils/DoctrineHelper.php";
-        // si DoctrineHelper n'existe pas, je le crée
+        $abstractRepoPath = "src/Repository/AbstractSolidRepository.php";
+        $interfaceRepoPath = "src/Repository/SolidRepositoryInterface.php";
+        // si DoctrineHelper, AbstractSolidRepository et SolidRepositoryInterface n'existent pas, je le crée
         $doctrineHelperTemplatePath = __DIR__ . '/../Resources/skeleton/doctrine_helper.tpl.php';
+        $abstractRepoTpl = __DIR__ . '/../Resources/skeleton/abstract_solid_repository.tpl.php';
+        $interfaceRepoTpl = __DIR__ . '/../Resources/skeleton/solid_repository_interface.tpl.php';
         if (!file_exists($helperPath)) {
             $generator->generateClass(
                 "App\\Utils\\DoctrineHelper",
-               $doctrineHelperTemplatePath
+                $doctrineHelperTemplatePath
             );
             $io->success("DoctrineHelper généré dans src/Utils/ ✅");
         }
+        // Génération de l'interface SolidRepositoryInterface
+        if (!file_exists($interfaceRepoPath)) {
+            $generator->generateClass(
+                "App\\Repository\\SolidRepositoryInterface",
+                $interfaceRepoTpl
+            );
+            $io->success("SolidRepositoryInterface générée dans src/Repository/ ✅");
+        }
+
+        // Génération de AbstractSolidRepository
+        if (!file_exists($abstractRepoPath)) {
+            $generator->generateClass(
+                "App\\Repository\\AbstractSolidRepository",
+                $abstractRepoTpl
+            );
+            $io->success("AbstractSolidRepository généré dans src/Repository/ ✅");
+        }
+
 
         $generator->writeChanges();
         $io->success("Service $serviceName généré ✅");
