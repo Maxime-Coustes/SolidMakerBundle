@@ -72,7 +72,7 @@ php bin/console make:solid-service <entity>
 ⚠️⚠️⚠️ Le service généré utilise `DoctrineHelper::getDoctrineColumns()` pour récupérer dynamiquement les colonnes Doctrine de l'entité associée, ce qui simplifie la gestion des propriétés dans le service.
 Par conséquent la génération de App\Utils\DoctrineHelper est nécessaire et prise en charge par la commande 
 php bin/console make:solid-service <entity>
-
+De plus, le Repository doit à présent étendre AbstractSolidRepository qui lui même étend ServiceEntityRepository qui implémente SolidRepositoryInterface afin d'accéder à getEntityClass.
 
 
 🔹 Génération d’une Interface SOLID
@@ -99,6 +99,13 @@ php bin/console make:solid-collection <entity>
 - Classe \<entity>Collection prête à l’emploi
 - Utilise DoctrineHelper pour vérifier que l’entité existe et récupérer ses métadonnées
 
+
+🔹 Génération d’un Controller pour l'entity
+```bash
+php bin/console make:solid-controller <entity>
+````
+
+➡️ Génère un controller associée au service de l’entité \<entity> avec les méthodes idoines.
 
 📜 Licence
 
