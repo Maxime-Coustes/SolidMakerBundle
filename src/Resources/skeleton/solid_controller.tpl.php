@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Utils\EntityArrayConverter;
 
 #[Route('/api/<?= strtolower($entityName) ?>s', name: 'api_<?= strtolower($entityName) ?>_')]
 class <?= $entityName ?>Controller extends AbstractController
@@ -50,7 +51,7 @@ class <?= $entityName ?>Controller extends AbstractController
         $collection = new <?= $entityName ?>Collection();
         $notFound = new <?= $entityName ?>Collection();
 
-        foreach ($data['<?= strtolower($entityName) ?>s'] ?? [] as $payload) {
+        foreach ($data ?? [] as $payload) {
             if (empty($payload['id'])) {
                 continue;
             }
@@ -73,14 +74,14 @@ class <?= $entityName ?>Controller extends AbstractController
             ], 404);
         }
 
-        $updated = $this-><?= lcfirst($entityName) ?>Service->update<?= $entityName ?>s($collection);
+        $result = $this-><?= lcfirst($entityName) ?>Service->update<?= $entityName ?>s($collection);
 
         return $this->json([
-            'updated' => $updated['updated']->get<?= $entityName ?>s(),
-            'not_found' => $updated['not_found']->get<?= $entityName ?>s(),
+            'updated' => array_map(fn($e) => EntityArrayConverter::toArray($e), $result['updated']->get<?= strtolower($entityName) ?>s()),
+            'not_found' => array_map(fn($e) => EntityArrayConverter::toArray($e), $result['not_found']->get<?= strtolower($entityName) ?>s()),
+            'message' => 'Mise à jour effectuée avec succès.',
         ]);
     }
-
 
     #[Route('', name: 'list', methods: ['GET'])]
     public function list(): JsonResponse

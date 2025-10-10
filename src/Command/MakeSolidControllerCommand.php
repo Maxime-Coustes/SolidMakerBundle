@@ -10,6 +10,7 @@ use Symfony\Bundle\MakerBundle\InputConfiguration;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class MakeSolidControllerCommand extends AbstractMaker
 {
@@ -44,6 +45,7 @@ class MakeSolidControllerCommand extends AbstractMaker
         $serviceName = "{$entityName}Service";
 
         $templatePath = __DIR__ . '/../Resources/skeleton/solid_controller.tpl.php';
+        $this->ensureEntityArrayConverterExists($generator, $io);
 
         $generator->generateClass(
             "App\\Controller\\{$entityName}Controller",
@@ -59,5 +61,22 @@ class MakeSolidControllerCommand extends AbstractMaker
 
         $generator->writeChanges();
         $io->success("✅ Controller {$entityName}Controller généré avec succès !");
+    }
+
+    private function ensureEntityArrayConverterExists(Generator $generator, ConsoleStyle $io): void
+    {
+        $targetPath = 'src/Utils/EntityArrayConverter.php';
+        $templatePath = __DIR__ . '/../Resources/skeleton/EntityArrayConverter.tpl.php';
+        if (!file_exists($targetPath)) {
+            $generator->generateClass(
+                'App\\Utils\\EntityArrayConverter',
+                $templatePath
+            );
+            $io->success('EntityArrayConverter ajouté au projet (via Generator).');
+        } else {
+            $io->text('EntityArrayConverter déjà présent.');
+        }
+        $generator->writeChanges();
+
     }
 }

@@ -14,7 +14,7 @@ class <?= $entityName ?>Repository extends AbstractSolidRepository implements So
     }
 
     // Exemple de méthode custom
-    public function findByName(string $name): ?<?= $entityName ?>
+    public function findByName(string $name): <?= $entityName ?>
     {
         return $this->findOneBy(['name' => $name]);
     }
@@ -38,7 +38,7 @@ class <?= $entityName ?>Repository extends AbstractSolidRepository implements So
      *
      * Ici on suppose que les entités de la collection sont déjà attachées à l'EntityManager.
      */
-    public function update<?= $entityName ?>s(<?= $entityName ?>Collection $<?= lcfirst($entityName) ?>s): void
+    public function update<?= $entityName ?>s(<?= $entityName ?>Collection $<?= lcfirst($entityName) ?>s): <?= $entityName ?>Collection
     {
         $em = $this->getEntityManager();
 
@@ -50,6 +50,7 @@ class <?= $entityName ?>Repository extends AbstractSolidRepository implements So
         }
 
         $em->flush();
+        return $<?= lcfirst($entityName) ?>s;
     }
 
     /**

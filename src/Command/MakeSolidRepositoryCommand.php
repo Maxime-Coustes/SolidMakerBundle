@@ -54,7 +54,9 @@ class MakeSolidRepositoryCommand extends AbstractMaker
             $this->printMessage($io, $level, $message);
 
             // ✅ Ajouter les méthodes custom manquantes (findAllActive, etc.)
-            $this->addCustomRepositoryMethods($repositoryPath, $entityName, $io);
+            $templatePath = __DIR__ . '/../Resources/skeleton/solid_repository.tpl.php';
+            $io->warning("iciiiiiiiiiiiii ");
+            $this->addTemplateMethodsIfMissing($repositoryPath, $templatePath, $entityName);
         } else {
             // Étape 3 : Génération initiale
             $io->warning("⚠️ Le repository {$entityName}Repository n'existe pas encore. Création en cours...");
@@ -178,40 +180,62 @@ class MakeSolidRepositoryCommand extends AbstractMaker
         };
     }
 
-    private function addCustomRepositoryMethods(string $repositoryPath, string $entityName, ConsoleStyle $io): void
+    /**
+     * Récupère les noms des méthodes publiques depuis un template rendu.
+     */
+    private function getMethodsFromTemplate(string $templatePath, string $entityName): array
     {
-        $content = file_get_contents($repositoryPath);
-        if (!preg_match('/class\s+' . $entityName . 'Repository\b/', $content)) {
-            $io->warning("Structure inattendue dans {$repositoryPath}");
-            return;
+        // On rend le template dans une variable
+        ob_start();
+        include $templatePath; // $entityName est disponible dans le template
+        $rendered = ob_get_clean();
+
+        // Regex pour récupérer toutes les méthodes publiques
+        preg_match_all('/public function (\w+)\s*\(/', $rendered, $matches);
+
+        return $matches[1] ?? [];
+    }
+
+    /**
+     * Ajoute les méthodes du template dans le repository si elles n'existent pas encore.
+     */
+    private function addTemplateMethodsIfMissing(string $repositoryPath, string $templatePath, string $entityName): void
+    {
+        if (!file_exists($repositoryPath)) {
+            throw new \RuntimeException("Repository $repositoryPath introuvable.");
         }
 
+        $repoCode = file_get_contents($repositoryPath);
 
-        $io->warning("contains ?", str_contains($content, 'findAllActive'));
-        // Exemple : on ajoute une méthode findAllActive si absente
-        if (!str_contains($content, 'findAllActive')) {
-            $customMethod = <<<PHP
+        // 1️⃣ Récupérer les méthodes existantes dans le repository
+        preg_match_all('/public function\s+(\w+)\s*\(/', $repoCode, $existingMatches);
+        $existingMethods = array_map('trim', $existingMatches[1] ?? []);
 
-            public function findAllActive(): array
-            {
-                return \$this->createQueryBuilder('e')
-                    ->where('e.active = true')
-                    ->getQuery()
-                    ->getResult();
+
+        // 2️⃣ Récupérer toutes les méthodes du template
+        ob_start();
+        include $templatePath;
+        $rendered = ob_get_clean();
+
+        preg_match_all('/public function (\w+)\s*\(.*?\)\s*{.*?}\s*/s', $rendered, $templateMatches);
+        $templateMethodsFull = $templateMatches[0] ?? [];
+        $templateMethodsNames = array_map(function ($m) {
+            preg_match('/public function (\w+)\s*\(/', $m, $nm);
+            return $nm[1];
+        }, $templateMethodsFull);
+
+        // 3️⃣ Filtrer uniquement celles qui manquent
+        foreach ($templateMethodsFull as $i => $methodCode) {
+            $methodName = $templateMethodsNames[$i];
+            if (in_array($methodName, $existingMethods, true)) {
+                continue; // méthode déjà présente, on ne touche pas
             }
 
-            PHP;
-            // 🧩 Injecter la méthode juste avant la dernière accolade fermante
-            // $content = preg_replace('/}\s*$/s', $customMethod . "\n}", $content, 1);
-            $content = preg_replace(
-                '/(class\s+' . $entityName . 'Repository.*\{)(.*)(\})/s',
-                '$1$2' . $customMethod . "\n}",
-                $content
-            );
-
-
-            file_put_contents($repositoryPath, $content);
-            $io->success("Méthode findAllActive ajoutée à {$entityName}Repository ✅");
+            // Ajouter juste avant la dernière accolade fermante de la classe
+            $repoCode = preg_replace('/}\s*$/', "\n\n" . trim($methodCode) . "\n}", $repoCode);
+            echo "OK Méthode $methodName ajoutée à $repositoryPath\n";
         }
+
+        file_put_contents($repositoryPath, $repoCode);
     }
 }
